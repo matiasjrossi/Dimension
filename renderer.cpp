@@ -7,11 +7,12 @@
 #include <cmath>
 #include <cassert>
 
+// z value average
 double avZ(Triangle* t)
 {
     return (t->a()->z() + t->b()->z() + t->c()->z()) / 3;
 }
-
+// painter's algorithm
 bool zLess(Triangle* a, Triangle* b)
 {
     return (avZ(a) < avZ(b));
@@ -104,6 +105,7 @@ QColor Renderer::castColor(Triangle* t)
 {
     double angleCosine = t->normal()*Vertex(0,0,-1);
     if (angleCosine < 0) angleCosine *= -1;
+    // TODO: sphong model simplification???
     unsigned short red =   0.6*object.red()   + 0.4*light.red()    *angleCosine;
     unsigned short green = 0.6*object.green() + 0.4*light.green()  *angleCosine;
     unsigned short blue =  0.6*object.blue()  + 0.4*light.blue()   *angleCosine;
@@ -135,7 +137,7 @@ QImage *Renderer::paint(QList<Triangle *> &triangles, QSize size)
     }
 
 
-
+// what does this?
 /*
 
     painter.setPen(Qt::yellow);

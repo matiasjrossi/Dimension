@@ -17,9 +17,11 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
     vp(new Viewport(this)),
-    renderer(new Renderer()),
-    om(NULL),
-    timer(new QTimer(this)),
+    renderer(new Renderer()), //??
+    om(NULL), //objectmodel
+    timer(new QTimer(this)), // used to tick the auto-rotate animation
+
+    //These are the buttons from the top, used to choose the colors
     background(new QPushButton(this)),
     object(new QPushButton(this)),
     light(new QPushButton(this))
@@ -51,7 +53,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(timer, SIGNAL(timeout()), this, SLOT(autoRotate()));
 
     connect(vp, SIGNAL(resized()), this, SLOT(reRender()));
-    on_action_Open_triggered();
+    on_action_Open_triggered(); // Load dialog at create
     on_actionAnimation_toggled(false);
 }
 
@@ -78,7 +80,7 @@ void MainWindow::on_action_Open_triggered()
     if (filepath == NULL) return;
     if (om != NULL)
         delete om;
-    om = SUROpener::openSUR(filepath);
+    om = SUROpener::openSUR(filepath);  // Reuse this :-)
 }
 
 void MainWindow::reRender()
@@ -110,6 +112,12 @@ void MainWindow::autoRotate()
     rotate(PI/(FPS*2), PI/(FPS*20));
 }
 
+
+
+
+/*
+  Handlers for color change
+  */
 void MainWindow::changeBackgroundColor()
 {
     QColor color;
