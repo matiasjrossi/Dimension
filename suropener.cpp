@@ -2,7 +2,6 @@
 #include "objectmodel.h"
 #include <QFile>
 #include <QDebug>
-#include <cassert>
 
 ObjectModel *SUROpener::openSUR(QString fileName)
 {
@@ -117,49 +116,86 @@ void SUROpener::Parser::dispatch(QString line)
 void SUROpener::Parser::parseGroup(QString line)
 {
     LineReader lr(line);
+    /*
+     * The first line of the "ELEMENT GROUPS" block indicates how many
+     * groups are contained within the section
+     */
     if (groupCount == -1)
     {
-        assert(lr.getWords().size() == 1);
-        groupCount = lr.getWords().at(0).toInt();
+        if (lr.getWords().size() < 1) {
+            qDebug() << "[SUROpener::Parser::parseGroup] ERROR: Ignoring malformed group count line:" << line;
+        } else {
+            if (lr.getWords().size() > 1) {
+                qDebug() << "[SUROpener::Parser::parseGroup] WARNING: Malformed group count line:" << line << "- Discarding extra values.";
+            }
+            groupCount = lr.getWords().at(0).toInt();
+        }
     }
     else
     {
-        assert(lr.getWords().size() == 3);
-        Group group;
-        group.first = lr.getWords().at(0).toInt();
-        group.last = lr.getWords().at(1).toInt();
-        groups.push_back(group);
+        if (lr.getWords().size() < 3) {
+            qDebug() << "[SUROpener::Parser::parseGroup] ERROR: Ignoring malformed group line:" << line;
+        } else {
+            if (lr.getWords().size() > 3) {
+                qDebug() << "[SUROpener::Parser::parseGroup] WARNING: Malformed group line:" << line << "- Discarding extra values.";
+            }
+            Group g;
+            g.first = lr.getWords().at(0).toInt();
+            g.last = lr.getWords().at(1).toInt();
+            groups.push_back(g);
+        }
     }
 }
 
 void SUROpener::Parser::parseIncidence(QString line)
 {
     LineReader lr(line);
-    assert(lr.getWords().size() == 3);
-    Incidence i;
-    i.a = lr.getWords().at(0).toInt();
-    i.b = lr.getWords().at(1).toInt();
-    i.c = lr.getWords().at(2).toInt();
-    incidences.push_back(i);
+    if (lr.getWords().size() < 3) {
+        qDebug() << "[SUROpener::Parser::parseIncidence] ERROR: Ignoring malformed incidence line:" << line;
+    } else {
+        if (lr.getWords().size() > 3) {
+            qDebug() << "[SUROpener::Parser::parseIncidence] WARNING: Malformed incidence line:" << line << "- Discarding extra values.";
+        }
+        Incidence i;
+        i.a = lr.getWords().at(0).toInt();
+        i.b = lr.getWords().at(1).toInt();
+        i.c = lr.getWords().at(2).toInt();
+        incidences.push_back(i);
+    }
 }
 
 void SUROpener::Parser::parseCoordinate(QString line)
 {
     LineReader lr(line);
+    /*
+     * The first line of the "COORDINATES" block indicates how many
+     * coordinates are contained within the section
+     */
     if (coordinateCount == -1)
     {
-        assert(lr.getWords().size() == 1);
-        coordinateCount = lr.getWords().at(0).toInt();
+        if (lr.getWords().size() < 1) {
+            qDebug() << QString("[SUROpener::Parser::parseCoordinate] ERROR: Ignoring malformed coordinate count line: ") << line;
+        } else {
+            if (lr.getWords().size() > 1) {
+                qDebug() << QString("[SUROpener::Parser::parseCoordinate] WARNING: Malformed coordinate count line: ") << line << QString(" - Discarding extra values.");
+            }
+            coordinateCount = lr.getWords().at(0).toInt();
+        }
     }
     else
     {
-        assert(lr.getWords().size() == 4);
-        Coordinate c;
-        c.x = lr.getWords().at(1).toDouble();
-        c.y = lr.getWords().at(2).toDouble();
-        c.z = lr.getWords().at(3).toDouble();
-        coordinates.push_back(c);
-        assert(coordinates.size() == lr.getWords().at(0).toInt());
+        if (lr.getWords().size() < 4) {
+            qDebug() << QString("[SUROpener::Parser::parseCoordinate] ERROR: Ignoring malformed coordinate line: ") << line;
+        } else {
+            if (lr.getWords().size() > 4) {
+                qDebug() << QString("[SUROpener::Parser::parseCoordinate] WARNING: Malformed coordinate line: ") << line << QString(" - Discarding extra values.");
+            }
+            Coordinate c;
+            c.x = lr.getWords().at(1).toDouble();
+            c.y = lr.getWords().at(2).toDouble();
+            c.z = lr.getWords().at(3).toDouble();
+            coordinates.push_back(c);
+        }
     }
 }
 
