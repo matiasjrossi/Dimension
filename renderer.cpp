@@ -33,8 +33,9 @@ QImage *Renderer::render(ObjectModel *model, QSize size)
     ObjectModel *aux = new ObjectModel(model);
     rotate(aux->getVertexes());
     sortTrianglesZ(aux->getTriangles());
-    return paint(aux->getTriangles(), size);
+    QImage* result = paint(aux->getTriangles(), size);
     delete aux;
+    return result;
 }
 
 double modulus(double a, double b)
