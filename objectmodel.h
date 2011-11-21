@@ -52,7 +52,6 @@ private:
 class Triangle
 {
 public:
-    Triangle(){};
     Triangle(Vertex *a, Vertex *b, Vertex *c) {
         _a = a;
         _b = b;
@@ -60,7 +59,8 @@ public:
         _normal = NULL;
     };
     ~Triangle(){
-        delete _normal;
+        if  (_normal != NULL)
+            delete _normal;
     }
 
     Vertex *a() { return _a; };

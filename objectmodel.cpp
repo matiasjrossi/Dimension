@@ -89,8 +89,7 @@ QList<Vertex*> &ObjectModel::getVertexes()
 
 double max(double a, double b, double c)
 {
-    double temp = max(a,b);
-    return max(temp,c);
+    return max(max(a, b), c);
 }
 
 void ObjectModel::normalize()
