@@ -3,3 +3,4 @@ qrc_*
 ui_*
 *.o
 Makefile
+Dimmension
