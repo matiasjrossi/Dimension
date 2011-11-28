@@ -10,6 +10,7 @@
 #include <QPushButton>
 #include <QColorDialog>
 #include <QLabel>
+#include <QShowEvent>
 
 #define FPS 50
 
@@ -30,9 +31,12 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     setCentralWidget(vp);
 
-    ui->mainToolBar->addAction(ui->action_Open);
+    ui->mainToolBar->addAction(ui->actionOpen);
     ui->mainToolBar->addAction(ui->actionAnimation);
     ui->mainToolBar->addAction(ui->actionToggle_wireframe);
+    ui->actionOpen->setIcon(style()->standardIcon(QStyle::SP_DialogOpenButton));
+    ui->actionAnimation->setIcon(style()->standardIcon(QStyle::SP_MediaPlay));
+    ui->actionToggle_wireframe->setIcon(QIcon(":/wireframe.png"));
 
     // Color buttons setup
     background->setAutoFillBackground(true);
@@ -62,7 +66,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(timer, SIGNAL(timeout()), this, SLOT(autoRotate()));
 
     connect(vp, SIGNAL(resized()), this, SLOT(reRender()));
-    on_action_Open_triggered(); // Load dialog at create
+    on_actionOpen_triggered(); // Load dialog at create
     on_actionAnimation_toggled(false);
 }
 
@@ -83,7 +87,7 @@ void MainWindow::changeEvent(QEvent *e)
     }
 }
 
-void MainWindow::on_action_Open_triggered()
+void MainWindow::on_actionOpen_triggered()
 {
     QString filepath = QFileDialog::getOpenFileName(this, QString("Select the surface to load"), NULL, "Surfaces (*.sur *.SUR)");
     if (filepath == NULL) return;

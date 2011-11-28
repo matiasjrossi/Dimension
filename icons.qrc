@@ -1,6 +1,6 @@
 <RCC>
     <qresource prefix="/">
-        <file>open.png</file>
-        <file>animation.png</file>
+        <file alias="wireframe.png">wireframe.png</file>
+        <file alias="icon.png">icon.png</file>
     </qresource>
 </RCC>

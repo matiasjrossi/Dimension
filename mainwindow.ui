@@ -25,6 +25,10 @@
   <property name="windowTitle">
    <string>Dimension</string>
   </property>
+  <property name="windowIcon">
+   <iconset resource="icons.qrc">
+    <normaloff>:/icon.png</normaloff>:/icon.png</iconset>
+  </property>
   <widget class="QWidget" name="centralWidget"/>
   <widget class="QToolBar" name="mainToolBar">
    <attribute name="toolBarArea">
@@ -35,25 +39,37 @@
    </attribute>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
-  <action name="action_Open">
-   <property name="icon">
-    <iconset resource="icons.qrc">
-     <normaloff>:/open.png</normaloff>:/open.png</iconset>
-   </property>
+  <action name="actionOpen">
    <property name="text">
     <string>&amp;Open</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+O</string>
    </property>
   </action>
   <action name="actionAnimation">
    <property name="checkable">
     <bool>true</bool>
    </property>
-   <property name="icon">
-    <iconset resource="icons.qrc">
-     <normaloff>:/animation.png</normaloff>:/animation.png</iconset>
+   <property name="text">
+    <string>Toggle &amp;animation</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+A</string>
+   </property>
+  </action>
+  <action name="actionToggle_wireframe">
+   <property name="checkable">
+    <bool>true</bool>
    </property>
    <property name="text">
-    <string>Toggle animation</string>
+    <string>Toggle &amp;wireframe</string>
+   </property>
+   <property name="toolTip">
+    <string>Toggle wireframe</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+W</string>
    </property>
   </action>
  </widget>
