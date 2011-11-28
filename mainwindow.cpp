@@ -24,6 +24,7 @@ MainWindow::MainWindow(QWidget *parent) :
     //These are the buttons from the top, used to choose the colors
     background(new QPushButton(this)),
     object(new QPushButton(this)),
+    wireframe(new QPushButton(this)),
     light(new QPushButton(this))
 {
     ui->setupUi(this);
@@ -31,22 +32,30 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->mainToolBar->addAction(ui->action_Open);
     ui->mainToolBar->addAction(ui->actionAnimation);
+    ui->mainToolBar->addAction(ui->actionToggle_wireframe);
+
+    // Color buttons setup
     background->setAutoFillBackground(true);
     object->setAutoFillBackground(true);
+    wireframe->setAutoFillBackground(true);
     light->setAutoFillBackground(true);
     background->setPalette(QPalette(renderer->getBackgroundColor()));
     object->setPalette(QPalette(renderer->getObjectColor()));
+    wireframe->setPalette(QPalette(renderer->getWireframeColor()));
     light->setPalette(QPalette(renderer->getLightColor()));
     background->setFlat(true);
     object->setFlat(true);
+    wireframe->setFlat(true);
     light->setFlat(true);
     ui->mainToolBar->addSeparator();
     ui->mainToolBar->addWidget(new QLabel("Colors: ", this));
     ui->mainToolBar->addWidget(background);
     ui->mainToolBar->addWidget(object);
+    ui->mainToolBar->addWidget(wireframe);
     ui->mainToolBar->addWidget(light);
     connect(background, SIGNAL(released()), this, SLOT(changeBackgroundColor()));
     connect(object, SIGNAL(released()), this, SLOT(changeObjectColor()));
+    connect(wireframe, SIGNAL(released()), this, SLOT(changeWireframeColor()));
     connect(light, SIGNAL(released()), this, SLOT(changeLightColor()));
 
     timer->setInterval(1000/FPS);
@@ -83,18 +92,6 @@ void MainWindow::on_action_Open_triggered()
     om = SUROpener::openSUR(filepath);  // Reuse this :-)
 }
 
-void MainWindow::reRender()
-{
-    if (om == NULL) return;
-    vp->setImage(renderer->render(om, vp->size()));
-}
-
-void MainWindow::rotate(double x, double y)
-{
-    renderer->changeRotation(x, y);
-    reRender();
-}
-
 void MainWindow::on_actionAnimation_toggled(bool s)
 {
     if (s)
@@ -107,17 +104,32 @@ void MainWindow::on_actionAnimation_toggled(bool s)
     }
 }
 
+void MainWindow::on_actionToggle_wireframe_toggled(bool s)
+{
+    renderer->setWireframeVisibility(s);
+    reRender();
+}
+
+void MainWindow::reRender()
+{
+    if (om == NULL) return;
+    vp->setImage(renderer->render(om, vp->size()));
+}
+
+void MainWindow::rotate(double x, double y)
+{
+    renderer->changeRotation(x, y);
+    reRender();
+}
+
 void MainWindow::autoRotate()
 {
     rotate(PI/(FPS*2), PI/(FPS*20));
 }
 
-
-
-
 /*
-  Handlers for color change
-  */
+ * Handlers for color change
+ */
 void MainWindow::changeBackgroundColor()
 {
     QColor color;
@@ -136,6 +148,18 @@ void MainWindow::changeObjectColor()
     {
         renderer->setObjectColor(color);
         object->setPalette(QPalette(color));
+    }
+    reRender();
+}
+
+
+void MainWindow::changeWireframeColor()
+{
+    QColor color;
+    if((color = QColorDialog::getColor(renderer->getWireframeColor(), this)).isValid())
+    {
+        renderer->setWireframeColor(color);
+        wireframe->setPalette(QPalette(color));
     }
     reRender();
 }

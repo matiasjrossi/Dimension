@@ -23,19 +23,23 @@ public:
     void setRotationY(double);
     void setRotationZ(double);
     void changeRotation(double, double);
+    void setWireframeVisibility(bool);
     void setBackgroundColor(QColor);
     void setObjectColor(QColor);
+    void setWireframeColor(QColor);
     void setLightColor(QColor);
     QColor getBackgroundColor();
     QColor getObjectColor();
+    QColor getWireframeColor();
     QColor getLightColor();
-private:
+protected:
     QColor castColor(Triangle*);
     void sortTrianglesZ(QList<Triangle*> &triangles);
     void rotate(QList<Vertex*> &vertex);
     QImage *paint(QList<Triangle*> &triangles, QSize size);
     double rotX, rotY, rotZ;
-    QColor background, object, light;
+    bool wireframeVisibility;
+    QColor backgroundColor, objectColor, wireframeColor, lightColor;
 };
 
 #endif // RENDERER_H

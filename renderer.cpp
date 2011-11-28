@@ -22,9 +22,11 @@ Renderer::Renderer() :
         rotX(0),
         rotY(0),
         rotZ(0),
-        background(QColor(15,0,20)),
-        object(QColor(50,150,150)),
-        light(QColor(255,255,200))
+        wireframeVisibility(false),
+        backgroundColor(QColor(15, 0, 20)),
+        objectColor(QColor(50, 150, 150)),
+        wireframeColor(QColor(255, 255, 0)),
+        lightColor(QColor(255, 255 ,200))
 {
 }
 
@@ -107,9 +109,9 @@ QColor Renderer::castColor(Triangle* t)
     double angleCosine = t->normal()*Vertex(0,0,-1);
     if (angleCosine < 0) angleCosine *= -1;
     // TODO: phong model simplification???
-    unsigned short red =   0.6*object.red()   + 0.4*light.red()    *angleCosine;
-    unsigned short green = 0.6*object.green() + 0.4*light.green()  *angleCosine;
-    unsigned short blue =  0.6*object.blue()  + 0.4*light.blue()   *angleCosine;
+    unsigned short red =   0.6*objectColor.red()   + 0.4*lightColor.red()    *angleCosine;
+    unsigned short green = 0.6*objectColor.green() + 0.4*lightColor.green()  *angleCosine;
+    unsigned short blue =  0.6*objectColor.blue()  + 0.4*lightColor.blue()   *angleCosine;
     if (red > 255) red = 255;
     if (green > 255) green = 255;
     if (blue > 255) blue = 255;
@@ -121,7 +123,7 @@ QImage *Renderer::paint(QList<Triangle *> &triangles, QSize size)
     unsigned halfWidth = size.width()/2, halfHeight = size.height()/2;
 
     QImage *output = new QImage(size, QImage::Format_RGB32);
-    output->fill(background.rgb());
+    output->fill(backgroundColor.rgb());
     QPainter painter(output);
 
     for (int i=0; i<triangles.size(); i++)
@@ -137,28 +139,27 @@ QImage *Renderer::paint(QList<Triangle *> &triangles, QSize size)
         painter.drawPolygon(QPolygon(points));
     }
 
-
-/*
- * Paint wireframe
- */
-/*
-    painter.setPen(Qt::yellow);
-    for (int i=0; i<triangles.size(); i++)
-    {
-        Triangle *current = triangles.at(i);
-        struct { QPoint a, b, c; } points;
-        points.a = QPoint(halfWidth+halfWidth*current->a()->x(),halfHeight-halfHeight*current->a()->y());
-        points.b = QPoint(halfWidth+halfWidth*current->b()->x(),halfHeight-halfHeight*current->b()->y());
-        points.c = QPoint(halfWidth+halfWidth*current->c()->x(),halfHeight-halfHeight*current->c()->y());
-        struct { QLine a, b, c; } lines;
-        lines.a = QLine(points.a, points.b);
-        lines.b = QLine(points.b, points.c);
-        lines.c = QLine(points.c, points.a);
-        painter.drawLine(lines.a);
-        painter.drawLine(lines.b);
-        painter.drawLine(lines.c);
+    /*
+     * Paint wireframe
+     */
+    if (wireframeVisibility == true) {
+        painter.setPen(wireframeColor);
+        for (int i=0; i<triangles.size(); i++)
+        {
+            Triangle *current = triangles.at(i);
+            struct { QPoint a, b, c; } points;
+            points.a = QPoint(halfWidth+halfWidth*current->a()->x(),halfHeight-halfHeight*current->a()->y());
+            points.b = QPoint(halfWidth+halfWidth*current->b()->x(),halfHeight-halfHeight*current->b()->y());
+            points.c = QPoint(halfWidth+halfWidth*current->c()->x(),halfHeight-halfHeight*current->c()->y());
+            struct { QLine a, b, c; } lines;
+            lines.a = QLine(points.a, points.b);
+            lines.b = QLine(points.b, points.c);
+            lines.c = QLine(points.c, points.a);
+            painter.drawLine(lines.a);
+            painter.drawLine(lines.b);
+            painter.drawLine(lines.c);
+        }
     }
-*/
 
     return output;
 }
@@ -169,32 +170,47 @@ void Renderer::changeRotation(double x, double y)
     rotateX(y);
 }
 
-void Renderer::setBackgroundColor(QColor c)
+void Renderer::setWireframeVisibility(bool v)
 {
-    background = c;
+    wireframeVisibility = v;
 }
 
-void Renderer::setLightColor(QColor c)
+void Renderer::setBackgroundColor(QColor c)
 {
-    light = c;
+    backgroundColor = c;
 }
 
 void Renderer::setObjectColor(QColor c)
 {
-    object = c;
+    objectColor = c;
+}
+
+void Renderer::setWireframeColor(QColor c)
+{
+    wireframeColor = c;
+}
+
+void Renderer::setLightColor(QColor c)
+{
+    lightColor = c;
 }
 
 QColor Renderer::getBackgroundColor()
 {
-    return background;
-}
-
-QColor Renderer::getLightColor()
-{
-    return light;
+    return backgroundColor;
 }
 
 QColor Renderer::getObjectColor()
 {
-    return object;
+    return objectColor;
+}
+
+QColor Renderer::getWireframeColor()
+{
+    return wireframeColor;
+}
+
+QColor Renderer::getLightColor()
+{
+    return lightColor;
 }
