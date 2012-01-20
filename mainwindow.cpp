@@ -94,6 +94,7 @@ void MainWindow::on_actionOpen_triggered()
     if (om != NULL)
         delete om;
     om = SUROpener::openSUR(filepath);  // Reuse this :-)
+    reRender();
 }
 
 void MainWindow::on_actionAnimation_toggled(bool s)
