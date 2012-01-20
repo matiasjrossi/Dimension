@@ -43,7 +43,7 @@ void Viewport::mouseMoveEvent(QMouseEvent *e)
     if(e->buttons() & Qt::LeftButton)
     {
         QPoint deltas = lastMousePos-e->pos();
-        emit mouseDrag(static_cast<double>(deltas.x())/width(), static_cast<double>(deltas.y())/height());
+        emit mouseDrag(static_cast<double>(deltas.x())/width(), static_cast<double>(-1*deltas.y())/height());
         lastMousePos = e->pos();
     }
 }
