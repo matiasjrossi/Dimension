@@ -120,6 +120,7 @@ QColor Renderer::castColor(Triangle* t)
 
 QImage *Renderer::paint(QList<Triangle *> &triangles, QSize size)
 {
+//    qDebug() << "[Renderer::paint] Rendering frame";
     unsigned halfWidth = size.width()/2, halfHeight = size.height()/2;
 
     QImage *output = new QImage(size, QImage::Format_RGB32);
@@ -132,32 +133,18 @@ QImage *Renderer::paint(QList<Triangle *> &triangles, QSize size)
         QColor color = castColor(current);
         painter.setPen(color);
         painter.setBrush(color);
-        QVector<QPoint> points;
-        points.push_back(QPoint(halfWidth+halfWidth*current->a()->x(),halfHeight-halfHeight*current->a()->y()));
-        points.push_back(QPoint(halfWidth+halfWidth*current->b()->x(),halfHeight-halfHeight*current->b()->y()));
-        points.push_back(QPoint(halfWidth+halfWidth*current->c()->x(),halfHeight-halfHeight*current->c()->y()));
-        painter.drawPolygon(QPolygon(points));
-    }
-
-    /*
-     * Paint wireframe
-     */
-    if (wireframeVisibility == true) {
-        painter.setPen(wireframeColor);
-        for (int i=0; i<triangles.size(); i++)
-        {
-            Triangle *current = triangles.at(i);
-            struct { QPoint a, b, c; } points;
-            points.a = QPoint(halfWidth+halfWidth*current->a()->x(),halfHeight-halfHeight*current->a()->y());
-            points.b = QPoint(halfWidth+halfWidth*current->b()->x(),halfHeight-halfHeight*current->b()->y());
-            points.c = QPoint(halfWidth+halfWidth*current->c()->x(),halfHeight-halfHeight*current->c()->y());
-            struct { QLine a, b, c; } lines;
-            lines.a = QLine(points.a, points.b);
-            lines.b = QLine(points.b, points.c);
-            lines.c = QLine(points.c, points.a);
-            painter.drawLine(lines.a);
-            painter.drawLine(lines.b);
-            painter.drawLine(lines.c);
+        QPoint points[3];
+        points[0] = QPoint(halfWidth+halfWidth*current->a()->x(),halfHeight-halfHeight*current->a()->y());
+        points[1] = QPoint(halfWidth+halfWidth*current->b()->x(),halfHeight-halfHeight*current->b()->y());
+        points[2] = QPoint(halfWidth+halfWidth*current->c()->x(),halfHeight-halfHeight*current->c()->y());
+        painter.drawPolygon(points, 3);
+        if (wireframeVisibility == true) {
+            painter.setPen(wireframeColor);
+            QLine lines[3];
+            lines[0] = QLine(points[0], points[1]);
+            lines[1] = QLine(points[1], points[2]);
+            lines[2] = QLine(points[2], points[0]);
+            painter.drawLines(lines, 3);
         }
     }
 
