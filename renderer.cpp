@@ -120,11 +120,24 @@ QColor Renderer::castColor(Triangle* t)
 
 QImage *Renderer::paint(QList<Triangle *> &triangles, QSize size)
 {
-//    qDebug() << "[Renderer::paint] Rendering frame";
-    unsigned halfWidth = size.width()/2, halfHeight = size.height()/2;
+    //    qDebug() << "[Renderer::paint] Rendering frame";
 
+    // Prepare output bitmap
     QImage *output = new QImage(size, QImage::Format_RGB32);
+    // Paint background
     output->fill(backgroundColor.rgb());
+
+    QRect clippedRect;
+    if (size.width() == size.height()) {
+        clippedRect.setRect(0, 0, size.width(), size.height());
+    } else if (size.width() > size.height()) {
+        clippedRect.setRect((size.width()-size.height())/2, 0, size.height(), size.height());
+    } else {
+        clippedRect.setRect(0, (size.height()-size.width())/2, size.width(), size.width());
+    }
+
+    unsigned halfWidth = clippedRect.width()/2, halfHeight = clippedRect.height()/2;
+
     QPainter painter(output);
 
     for (int i=0; i<triangles.size(); i++)
@@ -134,9 +147,9 @@ QImage *Renderer::paint(QList<Triangle *> &triangles, QSize size)
         painter.setPen(color);
         painter.setBrush(color);
         QPoint points[3];
-        points[0] = QPoint(halfWidth+halfWidth*current->a()->x(),halfHeight-halfHeight*current->a()->y());
-        points[1] = QPoint(halfWidth+halfWidth*current->b()->x(),halfHeight-halfHeight*current->b()->y());
-        points[2] = QPoint(halfWidth+halfWidth*current->c()->x(),halfHeight-halfHeight*current->c()->y());
+        points[0] = QPoint(clippedRect.x()+halfWidth+halfWidth*current->a()->x(),clippedRect.y()+halfHeight-halfHeight*current->a()->y());
+        points[1] = QPoint(clippedRect.x()+halfWidth+halfWidth*current->b()->x(),clippedRect.y()+halfHeight-halfHeight*current->b()->y());
+        points[2] = QPoint(clippedRect.x()+halfWidth+halfWidth*current->c()->x(),clippedRect.y()+halfHeight-halfHeight*current->c()->y());
         painter.drawPolygon(points, 3);
         if (wireframeVisibility == true) {
             painter.setPen(wireframeColor);
