@@ -8,12 +8,20 @@ DEPENDPATH += .
 INCLUDEPATH += .
 
 # Input
-HEADERS += mainwindow.h objectmodel.h renderer.h suropener.h viewport.h
+HEADERS += mainwindow.h objectmodel.h renderer.h suropener.h viewport.h \
+    light.h \
+    lightscontext.h \
+    phongmodel.h \
+    material.h
 FORMS += mainwindow.ui
 SOURCES += main.cpp \
            mainwindow.cpp \
            objectmodel.cpp \
            renderer.cpp \
            suropener.cpp \
-           viewport.cpp
+           viewport.cpp \
+    light.cpp \
+    lightscontext.cpp \
+    phongmodel.cpp \
+    material.cpp
 RESOURCES += icons.qrc
