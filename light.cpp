@@ -12,6 +12,12 @@ Light::Light(const QColor &iS, const QColor &iD) :
 {
 }
 
+Light::Light(Light *l) :
+    iS(l->iS),
+    iD(l->iD)
+{
+}
+
 void Light::setID(const QColor &iD)
 {
     Light::iD = iD;

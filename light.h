@@ -8,6 +8,7 @@ class Light
 public:
     Light();
     Light(QColor const &iS, QColor const &iD);
+    Light(Light *l);
     void setIS(QColor const &iS);
     void setID(QColor const &iD);
     QColor getIS() const;

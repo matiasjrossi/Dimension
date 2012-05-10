@@ -5,6 +5,7 @@
 #include "material.h"
 #include <QColor>
 
-QColor PhongModel::computeColor(Triangle &t, LightsContext &l, Material &m)
+QColor PhongModel::computeColor(Triangle *t, LightsContext *l, Material *m)
 {
+    return QColor(255, 127, 127);
 }

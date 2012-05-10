@@ -8,6 +8,7 @@ class LightsContext
 {
 public:
     LightsContext();
+    LightsContext(LightsContext *l);
     unsigned addLight(const Light &);
     void deleteLight(unsigned);
 private:

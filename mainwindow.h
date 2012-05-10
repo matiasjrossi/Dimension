@@ -28,7 +28,7 @@ private:
     Renderer *renderer;
     ObjectModel *om;
     QTimer *timer;
-    QPushButton *background, *object, *wireframe, *light;
+    QPushButton *background; //, *object, *wireframe, *light;
 
 private slots:
     void on_actionOpen_triggered();
@@ -38,9 +38,9 @@ private slots:
     void rotate(double x, double y);
     void autoRotate();
     void changeBackgroundColor();
-    void changeObjectColor();
-    void changeWireframeColor();
-    void changeLightColor();
+//    void changeObjectColor();
+//    void changeWireframeColor();
+//    void changeLightColor();
 };
 
 #endif // MAINWINDOW_H

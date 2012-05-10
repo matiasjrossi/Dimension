@@ -10,11 +10,14 @@ class QImage;
 class ObjectModel;
 class Triangle;
 class Vertex;
+class Material;
+class LightsContext;
 
 class Renderer
 {
 public:
     Renderer();
+    QImage *render(ObjectModel *model, QSize size, Material *objectMaterial, LightsContext *lightsContext);
     QImage *render(ObjectModel *model, QSize size);
     void rotateX(double);
     void rotateY(double);
@@ -37,6 +40,7 @@ protected:
     void sortTrianglesZ(QList<Triangle*> &triangles);
     void rotate(QList<Vertex*> &vertex);
     QImage *paint(QList<Triangle*> &triangles, QSize size);
+    QImage *paint(QList<Triangle*> &triangles, QSize size, Material *objectMaterial, LightsContext *lightsContext);
     double rotX, rotY, rotZ;
     bool wireframeVisibility;
     QColor backgroundColor, objectColor, wireframeColor, lightColor;

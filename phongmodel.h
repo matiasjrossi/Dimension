@@ -9,7 +9,7 @@ class QColor;
 class PhongModel
 {
 public:
-    static QColor computeColor(Triangle &t, LightsContext &l, Material &m);
+    static QColor computeColor(Triangle *t, LightsContext *l, Material *m);
 };
 
 #endif // PHONGMODEL_H
