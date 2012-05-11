@@ -2,6 +2,9 @@ moc_*
 qrc_*
 ui_*
 *.o
-Makefile
+object_script*
+release/*
+debug/*
+Makefile*
 Dimension
 Dimension.pro.*
