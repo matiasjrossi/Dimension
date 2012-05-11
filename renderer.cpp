@@ -26,7 +26,7 @@ Renderer::Renderer() :
         rotY(0),
         rotZ(0),
         wireframeVisibility(false),
-        backgroundColor(QColor(15, 0, 20)),
+        backgroundColor(QColor(0, 25, 40)),
         objectColor(QColor(50, 150, 150)),
         wireframeColor(QColor(255, 255, 0)),
         lightColor(QColor(255, 255 ,200))

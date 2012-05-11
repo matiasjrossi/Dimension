@@ -8,6 +8,9 @@ class Renderer;
 class ObjectModel;
 class QTimer;
 class QPushButton;
+class Material;
+class LightsContext;
+class Vertex;
 
 namespace Ui {
     class MainWindow;
@@ -28,7 +31,12 @@ private:
     Renderer *renderer;
     ObjectModel *om;
     QTimer *timer;
-    QPushButton *background; //, *object, *wireframe, *light;
+    QPushButton *background;
+    Material *objectMaterial;
+    LightsContext *lightsContext;
+    QString vertex2String(Vertex v);
+//    QString qColor2String(QColor c);
+    bool isAnimated;
 
 private slots:
     void on_actionOpen_triggered();
@@ -38,9 +46,17 @@ private slots:
     void rotate(double x, double y);
     void autoRotate();
     void changeBackgroundColor();
-//    void changeObjectColor();
-//    void changeWireframeColor();
-//    void changeLightColor();
+    void addLight();
+    void deleteSelectedLight();
+    void updateLightButtons();
+    void changeLightDiffuse();
+    void changeLightSpecular();
+    void changeLightAmbient();
+    void changeLightPosition();
+    void changeObjectAmbient();
+    void changeObjectDiffuse();
+    void changeObjectSpecular();
+    void changeObjectShininess(double);
 };
 
 #endif // MAINWINDOW_H

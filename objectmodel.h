@@ -29,9 +29,11 @@ public:
     void setQVector(QVector4D v){ _x=v.x(); _y=v.y(); _z=v.z(); };
 
     Vertex operator+(Vertex o){return Vertex(_x+o._x,_y+o._y,_z+o._z);};
+    Vertex operator-(Vertex o){return Vertex(_x-o._x,_y-o._y,_z-o._z);};
     Vertex operator/(double r){return Vertex(_x/r, _y/r, _z/r);};
 
     double operator*(Vertex o){return _x*o._x+_y*o._y+_z*o._z; };
+    Vertex operator*(double f){return Vertex(_x*f, _y*f, _z*f); };
     static Vertex crossProduct(Vertex &a,Vertex &b,Vertex &c){
         double ax = b.x() - a.x(),
         ay = b.y() - a.y(),
@@ -44,6 +46,7 @@ public:
                       ax*by-bx*ay);
     }
     Vertex getNormalized(){ double norm = sqrt(pow(_x,2)+pow(_y,2)+pow(_z,2)); return Vertex(_x/norm, _y/norm, _z/norm); };
+    Vertex getDistance(Vertex o){return o-this;};
 
 private:
     double _x, _y, _z;
