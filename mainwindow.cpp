@@ -22,7 +22,7 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
     vp(new Viewport(this)),
-    renderer(new Renderer()), //??
+    renderer(new Renderer()),
     om(NULL), //objectmodel
     timer(new QTimer(this)), // used to tick the auto-rotate animation
     background(new QPushButton(this)),
@@ -189,11 +189,6 @@ QString MainWindow::vertex2String(Vertex v)
 {
     return QString("(%1, %2, %3)").arg(v.x()).arg(v.y()).arg(v.z());
 }
-
-//QString MainWindow::qColor2String(QColor c)
-//{
-//    return QString("#%1%2%3").arg(c.red(), 2, 16).arg(c.green(), 2, 16).arg(c.blue(), 2, 16);
-//}
 
 void MainWindow::updateLightButtons()
 {

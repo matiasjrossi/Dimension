@@ -27,20 +27,8 @@ Renderer::Renderer() :
         rotZ(0),
         wireframeVisibility(false),
         backgroundColor(QColor(0, 25, 40)),
-        objectColor(QColor(50, 150, 150)),
-        wireframeColor(QColor(255, 255, 0)),
-        lightColor(QColor(255, 255 ,200))
+        wireframeColor(QColor(255, 255, 0))
 {
-}
-
-QImage *Renderer::render(ObjectModel *model, QSize size)
-{
-    ObjectModel *aux = new ObjectModel(model);
-    rotate(aux->getVertexes());
-    sortTrianglesZ(aux->getTriangles());
-    QImage* result = paint(aux->getTriangles(), size);
-    delete aux;
-    return result;
 }
 
 QImage *Renderer::render(ObjectModel *model, QSize size, Material *objectMaterial, LightsContext *lightsContext)
@@ -120,66 +108,6 @@ void Renderer::rotate(QList<Vertex *> &vertexes)
     }
 }
 
-QColor Renderer::castColor(Triangle* t)
-{
-    double angleCosine = t->normal()*Vertex(0,0,-1);
-    if (angleCosine < 0) angleCosine *= -1;
-    // TODO: phong model simplification???
-    unsigned short red =   0.6*objectColor.red()   + 0.4*lightColor.red()    *angleCosine;
-    unsigned short green = 0.6*objectColor.green() + 0.4*lightColor.green()  *angleCosine;
-    unsigned short blue =  0.6*objectColor.blue()  + 0.4*lightColor.blue()   *angleCosine;
-    if (red > 255) red = 255;
-    if (green > 255) green = 255;
-    if (blue > 255) blue = 255;
-    return QColor(red, green, blue);
-}
-
-QImage *Renderer::paint(QList<Triangle *> &triangles, QSize size)
-{
-    //    qDebug() << "[Renderer::paint] Rendering frame";
-
-    // Prepare output bitmap
-    QImage *output = new QImage(size, QImage::Format_RGB32);
-    // Paint background
-    output->fill(backgroundColor.rgb());
-
-    QRect clippedRect;
-    if (size.width() == size.height()) {
-        clippedRect.setRect(0, 0, size.width(), size.height());
-    } else if (size.width() > size.height()) {
-        clippedRect.setRect((size.width()-size.height())/2, 0, size.height(), size.height());
-    } else {
-        clippedRect.setRect(0, (size.height()-size.width())/2, size.width(), size.width());
-    }
-
-    unsigned halfWidth = clippedRect.width()/2, halfHeight = clippedRect.height()/2;
-
-    QPainter painter(output);
-
-    for (int i=0; i<triangles.size(); i++)
-    {
-        Triangle *current = triangles.at(i);
-        QColor color = castColor(current);
-        painter.setPen(color);
-        painter.setBrush(color);
-        QPoint points[3];
-        points[0] = QPoint(clippedRect.x()+halfWidth+halfWidth*current->a()->x(),clippedRect.y()+halfHeight-halfHeight*current->a()->y());
-        points[1] = QPoint(clippedRect.x()+halfWidth+halfWidth*current->b()->x(),clippedRect.y()+halfHeight-halfHeight*current->b()->y());
-        points[2] = QPoint(clippedRect.x()+halfWidth+halfWidth*current->c()->x(),clippedRect.y()+halfHeight-halfHeight*current->c()->y());
-        painter.drawPolygon(points, 3);
-        if (wireframeVisibility == true) {
-            painter.setPen(wireframeColor);
-            QLine lines[3];
-            lines[0] = QLine(points[0], points[1]);
-            lines[1] = QLine(points[1], points[2]);
-            lines[2] = QLine(points[2], points[0]);
-            painter.drawLines(lines, 3);
-        }
-    }
-
-    return output;
-}
-
 QImage *Renderer::paint(QList<Triangle*> &triangles, QSize size, Material *objectMaterial, LightsContext *lightsContext)
 {
     //    qDebug() << "[Renderer::paint] Rendering frame";
@@ -243,19 +171,9 @@ void Renderer::setBackgroundColor(QColor c)
     backgroundColor = c;
 }
 
-void Renderer::setObjectColor(QColor c)
-{
-    objectColor = c;
-}
-
 void Renderer::setWireframeColor(QColor c)
 {
     wireframeColor = c;
-}
-
-void Renderer::setLightColor(QColor c)
-{
-    lightColor = c;
 }
 
 QColor Renderer::getBackgroundColor()
@@ -263,17 +181,7 @@ QColor Renderer::getBackgroundColor()
     return backgroundColor;
 }
 
-QColor Renderer::getObjectColor()
-{
-    return objectColor;
-}
-
 QColor Renderer::getWireframeColor()
 {
     return wireframeColor;
-}
-
-QColor Renderer::getLightColor()
-{
-    return lightColor;
 }

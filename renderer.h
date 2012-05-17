@@ -18,7 +18,6 @@ class Renderer
 public:
     Renderer();
     QImage *render(ObjectModel *model, QSize size, Material *objectMaterial, LightsContext *lightsContext);
-    QImage *render(ObjectModel *model, QSize size);
     void rotateX(double);
     void rotateY(double);
     void rotateZ(double);
@@ -28,22 +27,16 @@ public:
     void changeRotation(double, double);
     void setWireframeVisibility(bool);
     void setBackgroundColor(QColor);
-    void setObjectColor(QColor);
     void setWireframeColor(QColor);
-    void setLightColor(QColor);
     QColor getBackgroundColor();
-    QColor getObjectColor();
     QColor getWireframeColor();
-    QColor getLightColor();
 protected:
-    QColor castColor(Triangle*);
     void sortTrianglesZ(QList<Triangle*> &triangles);
     void rotate(QList<Vertex*> &vertex);
-    QImage *paint(QList<Triangle*> &triangles, QSize size);
     QImage *paint(QList<Triangle*> &triangles, QSize size, Material *objectMaterial, LightsContext *lightsContext);
     double rotX, rotY, rotZ;
     bool wireframeVisibility;
-    QColor backgroundColor, objectColor, wireframeColor, lightColor;
+    QColor backgroundColor, wireframeColor;
 };
 
 #endif // RENDERER_H
