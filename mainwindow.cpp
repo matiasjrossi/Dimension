@@ -28,7 +28,7 @@ MainWindow::MainWindow(QWidget *parent) :
     background(new QPushButton(this)),
     objectMaterial(new Material(QColor(135,160,180), QColor(255,255,255), QColor(170, 200, 225), 20.0f)),
     lightsContext(new LightsContext()),
-    transformations(),
+    transformations(new QList<Transformation*>()),
     isAnimated(false)
 {
     ui->setupUi(this);
@@ -88,6 +88,29 @@ MainWindow::MainWindow(QWidget *parent) :
     lightsContext->getLightPtrAt(0)->setID(QColor(176,176,176));
     updateLightButtons();
 
+    //Transformations tab
+    connect(ui->transAddButton, SIGNAL(released()), this, SLOT(addTransformation()));
+    connect(ui->transDeleteButton, SIGNAL(released()), this, SLOT(deleteSelectedTransformation()));
+    connect(ui->transListWidget, SIGNAL(itemSelectionChanged()), this, SLOT(updateTransformationUI()));
+
+    connect(ui->transA1, SIGNAL(valueChanged(double)), this, SLOT(readTransformationUI()));
+    connect(ui->transA2, SIGNAL(valueChanged(double)), this, SLOT(readTransformationUI()));
+    connect(ui->transA3, SIGNAL(valueChanged(double)), this, SLOT(readTransformationUI()));
+    connect(ui->transA4, SIGNAL(valueChanged(double)), this, SLOT(readTransformationUI()));
+    connect(ui->transB1, SIGNAL(valueChanged(double)), this, SLOT(readTransformationUI()));
+    connect(ui->transB2, SIGNAL(valueChanged(double)), this, SLOT(readTransformationUI()));
+    connect(ui->transB3, SIGNAL(valueChanged(double)), this, SLOT(readTransformationUI()));
+    connect(ui->transB4, SIGNAL(valueChanged(double)), this, SLOT(readTransformationUI()));
+    connect(ui->transC1, SIGNAL(valueChanged(double)), this, SLOT(readTransformationUI()));
+    connect(ui->transC2, SIGNAL(valueChanged(double)), this, SLOT(readTransformationUI()));
+    connect(ui->transC3, SIGNAL(valueChanged(double)), this, SLOT(readTransformationUI()));
+    connect(ui->transC4, SIGNAL(valueChanged(double)), this, SLOT(readTransformationUI()));
+    connect(ui->transD1, SIGNAL(valueChanged(double)), this, SLOT(readTransformationUI()));
+    connect(ui->transD2, SIGNAL(valueChanged(double)), this, SLOT(readTransformationUI()));
+    connect(ui->transD3, SIGNAL(valueChanged(double)), this, SLOT(readTransformationUI()));
+    connect(ui->transD4, SIGNAL(valueChanged(double)), this, SLOT(readTransformationUI()));
+
+    updateTransformationUI();
 
 
     timer->setInterval(1000/FPS);
@@ -156,7 +179,7 @@ void MainWindow::on_actionToggle_wireframe_toggled(bool s)
 void MainWindow::reRender()
 {
     if (om == NULL) return;
-    vp->setImage(renderer->render(om, vp->size(), objectMaterial, lightsContext));
+    vp->setImage(renderer->render(om, vp->size(), objectMaterial, lightsContext, transformations));
 }
 
 void MainWindow::rotate(double x, double y)
@@ -352,46 +375,94 @@ void MainWindow::deleteSelectedTransformation()
 
 void MainWindow::readTransformationUI()
 {
-
+    int pos = ui->transListWidget->currentRow();
+    if (pos != -1) {
+        QVector4D a;
+        QVector4D b;
+        QVector4D c;
+        QVector4D d;
+        a.setW(ui->transA1->value());
+        a.setX(ui->transA2->value());
+        a.setY(ui->transA3->value());
+        a.setZ(ui->transA4->value());
+        b.setW(ui->transB1->value());
+        b.setX(ui->transB2->value());
+        b.setY(ui->transB3->value());
+        b.setZ(ui->transB4->value());
+        c.setW(ui->transC1->value());
+        c.setX(ui->transC2->value());
+        c.setY(ui->transC3->value());
+        c.setZ(ui->transC4->value());
+        d.setW(ui->transD1->value());
+        d.setX(ui->transD2->value());
+        d.setY(ui->transD3->value());
+        d.setZ(ui->transD4->value());
+        QMatrix4x4 *m = transformations->at(pos)->getMatrix();
+        m->setRow(0, a);
+        m->setRow(1, b);
+        m->setRow(2, c);
+        m->setRow(3, d);
+    }
 }
 
 void MainWindow::updateTransformationUI()
 {
     int pos = ui->transListWidget->currentRow();
     if (pos == -1) {
-        ui->transA1->setEnabled(false);
-        ui->transA2->setEnabled(false);
-        ui->transA3->setEnabled(false);
-        ui->transA4->setEnabled(false);
-        ui->transB1->setEnabled(false);
-        ui->transB2->setEnabled(false);
-        ui->transB3->setEnabled(false);
-        ui->transB4->setEnabled(false);
-        ui->transC1->setEnabled(false);
-        ui->transC2->setEnabled(false);
-        ui->transC3->setEnabled(false);
-        ui->transC4->setEnabled(false);
-        ui->transD1->setEnabled(false);
-        ui->transD2->setEnabled(false);
-        ui->transD3->setEnabled(false);
-        ui->transD4->setEnabled(false);
+        ui->transA1->setValue(0.0);
+        ui->transA2->setValue(0.0);
+        ui->transA3->setValue(0.0);
+        ui->transA4->setValue(0.0);
+        ui->transB1->setValue(0.0);
+        ui->transB2->setValue(0.0);
+        ui->transB3->setValue(0.0);
+        ui->transB4->setValue(0.0);
+        ui->transC1->setValue(0.0);
+        ui->transC2->setValue(0.0);
+        ui->transC3->setValue(0.0);
+        ui->transC4->setValue(0.0);
+        ui->transD1->setValue(0.0);
+        ui->transD2->setValue(0.0);
+        ui->transD3->setValue(0.0);
+        ui->transD4->setValue(0.0);
     } else {
-        Light l = lightsContext->getLightAt(pos);
-        //Intensities
-        ui->lightsDiffuseButton->setPalette(QPalette(l.getID()));
-        ui->lightsDiffuseButton->setText(l.getID().name());
-        ui->lightsSpecularButton->setPalette(QPalette(l.getIS()));
-        ui->lightsSpecularButton->setText(l.getIS().name());
-        //Vector
-        ui->lightsXSpinbox->setValue(l.getPos().x());
-        ui->lightsYSpinbox->setValue(l.getPos().y());
-        ui->lightsZSpinbox->setValue(l.getPos().z());
+        QMatrix4x4 *m = transformations->at(pos)->getMatrix();
+        QVector4D a = m->row(0);
+        QVector4D b = m->row(1);
+        QVector4D c = m->row(2);
+        QVector4D d = m->row(3);
+        ui->transA1->setValue(a.w());
+        ui->transA2->setValue(a.x());
+        ui->transA3->setValue(a.y());
+        ui->transA4->setValue(a.z());
+        ui->transB1->setValue(b.w());
+        ui->transB2->setValue(b.x());
+        ui->transB3->setValue(b.y());
+        ui->transB4->setValue(b.z());
+        ui->transC1->setValue(c.w());
+        ui->transC2->setValue(c.x());
+        ui->transC3->setValue(c.y());
+        ui->transC4->setValue(c.z());
+        ui->transD1->setValue(d.w());
+        ui->transD2->setValue(d.x());
+        ui->transD3->setValue(d.y());
+        ui->transD4->setValue(d.z());
     }
     bool valid = (pos != -1);
-    ui->lightsDiffuseButton->setEnabled(valid);
-    ui->lightsSpecularButton->setEnabled(valid);
-    ui->lightsXSpinbox->setEnabled(valid);
-    ui->lightsYSpinbox->setEnabled(valid);
-    ui->lightsZSpinbox->setEnabled(valid);
-    ui->lightsDeleteButton->setEnabled(valid);
+    ui->transA1->setEnabled(valid);
+    ui->transA2->setEnabled(valid);
+    ui->transA3->setEnabled(valid);
+    ui->transA4->setEnabled(valid);
+    ui->transB1->setEnabled(valid);
+    ui->transB2->setEnabled(valid);
+    ui->transB3->setEnabled(valid);
+    ui->transB4->setEnabled(valid);
+    ui->transC1->setEnabled(valid);
+    ui->transC2->setEnabled(valid);
+    ui->transC3->setEnabled(valid);
+    ui->transC4->setEnabled(valid);
+    ui->transD1->setEnabled(valid);
+    ui->transD2->setEnabled(valid);
+    ui->transD3->setEnabled(valid);
+    ui->transD4->setEnabled(valid);
 }

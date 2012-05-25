@@ -31,10 +31,13 @@ Renderer::Renderer() :
 {
 }
 
-QImage *Renderer::render(ObjectModel *model, QSize size, Material *objectMaterial, LightsContext *lightsContext)
+QImage *Renderer::render(ObjectModel *model, QSize size, Material *objectMaterial, LightsContext *lightsContext, QList<Transformation*> *transformations)
 {
     ObjectModel *modelAux = new ObjectModel(model);
     LightsContext *lightsAux = new LightsContext(lightsContext);
+    for (int i=0; i<transformations->size(); i++) {
+        transformations->at(i)->transform(modelAux->getVertexes());
+    }
     rotate(modelAux->getVertexes());
 //    rotateLights(lightsAux);
     sortTrianglesZ(modelAux->getTriangles());
@@ -100,7 +103,7 @@ void Renderer::rotate(QList<Vertex *> &vertexes)
                    0, 0, 1, 0,
                    0, 0, 0, 1);
 
-    Transformation t(xRM * yRM * zRM);
+    Transformation t(new QMatrix4x4(xRM * yRM * zRM));
     t.transform(vertexes);
 }
 

@@ -8,11 +8,13 @@ class Transformation
 {
 public:
     Transformation();
-    Transformation(QMatrix4x4 matrix);
+    Transformation(QMatrix4x4 *matrix);
+    ~Transformation();
+    QMatrix4x4 *getMatrix();
     void transform(Vertex *vertex);
     void transform(QList<Vertex *> &vertexes);
 private:
-    QMatrix4x4 m;
+    QMatrix4x4 *m;
 };
 
 #endif // TRANSFORMATION_H

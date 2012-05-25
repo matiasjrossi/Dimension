@@ -17,7 +17,7 @@ class Renderer
 {
 public:
     Renderer();
-    QImage *render(ObjectModel *model, QSize size, Material *objectMaterial, LightsContext *lightsContext);
+    QImage *render(ObjectModel *model, QSize size, Material *objectMaterial, LightsContext *lightsContext, QList<Transformation *> *transformations);
     void rotateX(double);
     void rotateY(double);
     void rotateZ(double);
