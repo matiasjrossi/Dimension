@@ -9,6 +9,7 @@
 #include <cmath>
 #include <cassert>
 #include "phongmodel.h"
+#include "light.h"
 
 // z value average
 double avZ(Triangle* t)
@@ -35,11 +36,25 @@ QImage *Renderer::render(ObjectModel *model, QSize size, Material *objectMateria
 {
     ObjectModel *modelAux = new ObjectModel(model);
     LightsContext *lightsAux = new LightsContext(lightsContext);
+    // Object transformations
     for (int i=0; i<transformations->size(); i++) {
-        transformations->at(i)->transform(modelAux->getVertexes());
+        Transformation *t = transformations->at(i);
+        if (t->getTransformCoordinates() == Transformation::TRANSFORM_OBJECT)
+            t->transform(modelAux->getVertexes());
     }
-    rotate(modelAux->getVertexes());
-//    rotateLights(lightsAux);
+    // Camera transformations
+    Transformation rot = buildRotation();
+    rot.transform(modelAux->getVertexes());
+    for (unsigned i=0; i<lightsAux->getLightsCount(); i++) {
+        Light *l = lightsAux->getLightPtrAt(i);
+        if (l->isRotateWithCamera())
+            rot.transform(l->getPosPtr());
+    }
+    for (int i=0; i<transformations->size(); i++) {
+        Transformation *t = transformations->at(i);
+        if (t->getTransformCoordinates() == Transformation::TRANSFORM_CAMERA)
+            t->transform(modelAux->getVertexes());
+    }
     sortTrianglesZ(modelAux->getTriangles());
     QImage* result = paint(modelAux->getTriangles(), size, objectMaterial, lightsAux);
     delete modelAux;
@@ -88,7 +103,7 @@ void Renderer::sortTrianglesZ(QList<Triangle*> &triangles)
     qSort(triangles.begin(), triangles.end(), zLess);
 }
 
-void Renderer::rotate(QList<Vertex *> &vertexes)
+Transformation Renderer::buildRotation()
 {
     QMatrix4x4 xRM(1, 0, 0, 0,
                    0, cos(rotX), -sin(rotX), 0,
@@ -103,8 +118,7 @@ void Renderer::rotate(QList<Vertex *> &vertexes)
                    0, 0, 1, 0,
                    0, 0, 0, 1);
 
-    Transformation t(new QMatrix4x4(xRM * yRM * zRM));
-    t.transform(vertexes);
+    return Transformation(new QMatrix4x4(xRM * yRM * zRM));
 }
 
 QImage *Renderer::paint(QList<Triangle*> &triangles, QSize size, Material *objectMaterial, LightsContext *lightsContext)

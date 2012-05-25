@@ -55,6 +55,7 @@ private slots:
     void changeLightSpecular();
     void changeLightAmbient();
     void changeLightPosition();
+    void changeLightRotateWithCamera(bool);
     void changeObjectAmbient();
     void changeObjectDiffuse();
     void changeObjectSpecular();

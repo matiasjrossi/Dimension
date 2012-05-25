@@ -32,7 +32,7 @@ public:
     QColor getWireframeColor();
 protected:
     void sortTrianglesZ(QList<Triangle*> &triangles);
-    void rotate(QList<Vertex*> &vertex);
+    Transformation buildRotation();
     QImage *paint(QList<Triangle*> &triangles, QSize size, Material *objectMaterial, LightsContext *lightsContext);
     double rotX, rotY, rotZ;
     bool wireframeVisibility;

@@ -84,6 +84,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->lightsXSpinbox, SIGNAL(valueChanged(double)), this, SLOT(changeLightPosition()));
     connect(ui->lightsYSpinbox, SIGNAL(valueChanged(double)), this, SLOT(changeLightPosition()));
     connect(ui->lightsZSpinbox, SIGNAL(valueChanged(double)), this, SLOT(changeLightPosition()));
+    connect(ui->lightsRotateWithCameraCheckbox, SIGNAL(toggled(bool)), this, SLOT(changeLightRotateWithCamera(bool)));
     addLight();
     lightsContext->getLightPtrAt(0)->setID(QColor(176,176,176));
     updateLightButtons();
@@ -109,6 +110,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->transD2, SIGNAL(valueChanged(double)), this, SLOT(readTransformationUI()));
     connect(ui->transD3, SIGNAL(valueChanged(double)), this, SLOT(readTransformationUI()));
     connect(ui->transD4, SIGNAL(valueChanged(double)), this, SLOT(readTransformationUI()));
+    connect(ui->transComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(readTransformationUI()));
 
     updateTransformationUI();
 
@@ -226,6 +228,7 @@ void MainWindow::updateLightButtons()
         ui->lightsXSpinbox->setValue(0.0);
         ui->lightsYSpinbox->setValue(0.0);
         ui->lightsZSpinbox->setValue(0.0);
+        ui->lightsRotateWithCameraCheckbox->setChecked(false);
     } else {
         Light l = lightsContext->getLightAt(pos);
         //Intensities
@@ -237,6 +240,7 @@ void MainWindow::updateLightButtons()
         ui->lightsXSpinbox->setValue(l.getPos().x());
         ui->lightsYSpinbox->setValue(l.getPos().y());
         ui->lightsZSpinbox->setValue(l.getPos().z());
+        ui->lightsRotateWithCameraCheckbox->setChecked(l.isRotateWithCamera());
     }
     bool valid = (pos != -1);
     ui->lightsDiffuseButton->setEnabled(valid);
@@ -245,6 +249,7 @@ void MainWindow::updateLightButtons()
     ui->lightsYSpinbox->setEnabled(valid);
     ui->lightsZSpinbox->setEnabled(valid);
     ui->lightsDeleteButton->setEnabled(valid);
+    ui->lightsRotateWithCameraCheckbox->setEnabled(valid);
 }
 
 /*
@@ -357,6 +362,16 @@ void MainWindow::changeLightPosition()
     }
 }
 
+void MainWindow::changeLightRotateWithCamera(bool r)
+{
+    int pos = ui->lightsListWidget->currentRow();
+    if (pos != -1) {
+        Light *l = lightsContext->getLightPtrAt(pos);
+        l->setRotateWithCamera(r);
+        if (!isAnimated) reRender();
+    }
+}
+
 void MainWindow::addTransformation()
 {
     Transformation *t = new Transformation();
@@ -377,6 +392,7 @@ void MainWindow::readTransformationUI()
 {
     int pos = ui->transListWidget->currentRow();
     if (pos != -1) {
+        Transformation *t = transformations->at(pos);
         QVector4D a;
         QVector4D b;
         QVector4D c;
@@ -397,11 +413,14 @@ void MainWindow::readTransformationUI()
         d.setX(ui->transD2->value());
         d.setY(ui->transD3->value());
         d.setZ(ui->transD4->value());
-        QMatrix4x4 *m = transformations->at(pos)->getMatrix();
+        QMatrix4x4 *m = t->getMatrix();
         m->setRow(0, a);
         m->setRow(1, b);
         m->setRow(2, c);
         m->setRow(3, d);
+        t->setTransformCoordinates(ui->transComboBox->currentIndex());
+//        transformations->replace(pos, t);
+        if (!isAnimated) reRender();
     }
 }
 
@@ -425,8 +444,10 @@ void MainWindow::updateTransformationUI()
         ui->transD2->setValue(0.0);
         ui->transD3->setValue(0.0);
         ui->transD4->setValue(0.0);
+        ui->transComboBox->setCurrentIndex(0);
     } else {
-        QMatrix4x4 *m = transformations->at(pos)->getMatrix();
+        Transformation *t = transformations->at(pos);
+        QMatrix4x4 *m = t->getMatrix();
         QVector4D a = m->row(0);
         QVector4D b = m->row(1);
         QVector4D c = m->row(2);
@@ -447,6 +468,7 @@ void MainWindow::updateTransformationUI()
         ui->transD2->setValue(d.x());
         ui->transD3->setValue(d.y());
         ui->transD4->setValue(d.z());
+        ui->transComboBox->setCurrentIndex(t->getTransformCoordinates());
     }
     bool valid = (pos != -1);
     ui->transA1->setEnabled(valid);
@@ -465,4 +487,5 @@ void MainWindow::updateTransformationUI()
     ui->transD2->setEnabled(valid);
     ui->transD3->setEnabled(valid);
     ui->transD4->setEnabled(valid);
+    ui->transComboBox->setEnabled(valid);
 }
