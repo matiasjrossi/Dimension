@@ -2,6 +2,8 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QList>
+#include "transformation.h"
 
 class Viewport;
 class Renderer;
@@ -34,8 +36,8 @@ private:
     QPushButton *background;
     Material *objectMaterial;
     LightsContext *lightsContext;
+    QList<Transformation*> *transformations;
     QString vertex2String(Vertex v);
-//    QString qColor2String(QColor c);
     bool isAnimated;
 
 private slots:
@@ -57,6 +59,10 @@ private slots:
     void changeObjectDiffuse();
     void changeObjectSpecular();
     void changeObjectShininess(double);
+    void addTransformation();
+    void deleteSelectedTransformation();
+    void updateTransformationUI();
+    void readTransformationUI();
 };
 
 #endif // MAINWINDOW_H

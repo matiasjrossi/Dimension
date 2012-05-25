@@ -28,6 +28,7 @@ MainWindow::MainWindow(QWidget *parent) :
     background(new QPushButton(this)),
     objectMaterial(new Material(QColor(135,160,180), QColor(255,255,255), QColor(170, 200, 225), 20.0f)),
     lightsContext(new LightsContext()),
+    transformations(),
     isAnimated(false)
 {
     ui->setupUi(this);
@@ -44,6 +45,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->dockWidgetContents->layout()->addWidget(toolBar);
 
+    // Mouse events for the viewport
+    connect(vp, SIGNAL(mouseDrag(double,double)), this, SLOT(rotate(double,double)));
 
     // Background button setup
     background->setText("Background");
@@ -73,8 +76,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->lightsAmbientButton->setPalette(QPalette(lightsContext->getAmbient()));
     ui->lightsAmbientButton->setText(lightsContext->getAmbient().name());
     connect(ui->lightsAmbientButton, SIGNAL(released()), this, SLOT(changeLightAmbient()));
-    connect(ui->lightsAdd, SIGNAL(released()), this, SLOT(addLight()));
-    connect(ui->lightsDelete, SIGNAL(released()), this, SLOT(deleteSelectedLight()));
+    connect(ui->lightsAddButton, SIGNAL(released()), this, SLOT(addLight()));
+    connect(ui->lightsDeleteButton, SIGNAL(released()), this, SLOT(deleteSelectedLight()));
     connect(ui->lightsListWidget, SIGNAL(itemSelectionChanged()), this, SLOT(updateLightButtons()));
     connect(ui->lightsDiffuseButton, SIGNAL(released()), this, SLOT(changeLightDiffuse()));
     connect(ui->lightsSpecularButton, SIGNAL(released()), this, SLOT(changeLightSpecular()));
@@ -137,11 +140,9 @@ void MainWindow::on_actionAnimation_toggled(bool s)
 {
     if (s)
     {
-        disconnect(this, SLOT(rotate(double,double)));
         timer->start();
     } else {
         timer->stop();
-        connect(vp, SIGNAL(mouseDrag(double,double)), this, SLOT(rotate(double,double)));
     }
     isAnimated = s;
 }
@@ -220,7 +221,7 @@ void MainWindow::updateLightButtons()
     ui->lightsXSpinbox->setEnabled(valid);
     ui->lightsYSpinbox->setEnabled(valid);
     ui->lightsZSpinbox->setEnabled(valid);
-    ui->lightsDelete->setEnabled(valid);
+    ui->lightsDeleteButton->setEnabled(valid);
 }
 
 /*
@@ -331,4 +332,66 @@ void MainWindow::changeLightPosition()
         ui->lightsListWidget->currentItem()->setText(vertex2String(l->getPos()));
         if (!isAnimated) reRender();
     }
+}
+
+void MainWindow::addTransformation()
+{
+    Transformation *t = new Transformation();
+    transformations->append(t);
+    ui->transListWidget->setCurrentItem(new QListWidgetItem("sarasa", ui->transListWidget));
+    if (!isAnimated) reRender();
+}
+
+void MainWindow::deleteSelectedTransformation()
+{
+    unsigned pos = ui->transListWidget->currentRow();
+    delete (ui->transListWidget->takeItem(pos)); // This fires an event that calls updateTransformationUI().
+    transformations->removeAt(pos); //Don't remove the transformation before that event is processed!
+    if (!isAnimated) reRender();
+}
+
+void MainWindow::readTransformationUI()
+{
+
+}
+
+void MainWindow::updateTransformationUI()
+{
+    int pos = ui->transListWidget->currentRow();
+    if (pos == -1) {
+        ui->transA1->setEnabled(false);
+        ui->transA2->setEnabled(false);
+        ui->transA3->setEnabled(false);
+        ui->transA4->setEnabled(false);
+        ui->transB1->setEnabled(false);
+        ui->transB2->setEnabled(false);
+        ui->transB3->setEnabled(false);
+        ui->transB4->setEnabled(false);
+        ui->transC1->setEnabled(false);
+        ui->transC2->setEnabled(false);
+        ui->transC3->setEnabled(false);
+        ui->transC4->setEnabled(false);
+        ui->transD1->setEnabled(false);
+        ui->transD2->setEnabled(false);
+        ui->transD3->setEnabled(false);
+        ui->transD4->setEnabled(false);
+    } else {
+        Light l = lightsContext->getLightAt(pos);
+        //Intensities
+        ui->lightsDiffuseButton->setPalette(QPalette(l.getID()));
+        ui->lightsDiffuseButton->setText(l.getID().name());
+        ui->lightsSpecularButton->setPalette(QPalette(l.getIS()));
+        ui->lightsSpecularButton->setText(l.getIS().name());
+        //Vector
+        ui->lightsXSpinbox->setValue(l.getPos().x());
+        ui->lightsYSpinbox->setValue(l.getPos().y());
+        ui->lightsZSpinbox->setValue(l.getPos().z());
+    }
+    bool valid = (pos != -1);
+    ui->lightsDiffuseButton->setEnabled(valid);
+    ui->lightsSpecularButton->setEnabled(valid);
+    ui->lightsXSpinbox->setEnabled(valid);
+    ui->lightsYSpinbox->setEnabled(valid);
+    ui->lightsZSpinbox->setEnabled(valid);
+    ui->lightsDeleteButton->setEnabled(valid);
 }

@@ -100,12 +100,8 @@ void Renderer::rotate(QList<Vertex *> &vertexes)
                    0, 0, 1, 0,
                    0, 0, 0, 1);
 
-    QMatrix4x4 transformation = xRM * yRM * zRM;
-
-    for (int i=0; i<vertexes.size(); i++)
-    {
-        vertexes.at(i)->setQVector(transformation.map(vertexes.at(i)->toQVector()));
-    }
+    Transformation t(xRM * yRM * zRM);
+    t.transform(vertexes);
 }
 
 QImage *Renderer::paint(QList<Triangle*> &triangles, QSize size, Material *objectMaterial, LightsContext *lightsContext)

@@ -12,7 +12,8 @@ HEADERS += mainwindow.h objectmodel.h renderer.h suropener.h viewport.h \
     light.h \
     lightscontext.h \
     phongmodel.h \
-    material.h
+    material.h \
+    transformation.h
 FORMS += mainwindow.ui
 SOURCES += main.cpp \
            mainwindow.cpp \
@@ -23,5 +24,6 @@ SOURCES += main.cpp \
     light.cpp \
     lightscontext.cpp \
     phongmodel.cpp \
-    material.cpp
+    material.cpp \
+    transformation.cpp
 RESOURCES += icons.qrc

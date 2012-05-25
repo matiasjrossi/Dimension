@@ -2,8 +2,8 @@
 #define RENDERER_H
 
 #include <QList>
-#include <QMatrix4x4>
 #include <QColor>
+#include "transformation.h"
 #define PI 3.1415926535897932384626433832795028841971
 
 class QImage;
