@@ -120,10 +120,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(vp, SIGNAL(resized()), this, SLOT(reRender()));
     on_actionOpen_triggered(); // Load dialog at create
-//    ///////////////77
-//    om = SUROpener::openSUR("surfaces/misil-ori.sur");
-//    reRender();
-//    ////////////7////
     ui->actionAnimation->toggle();
 }
 
@@ -214,6 +210,15 @@ void MainWindow::deleteSelectedLight()
 QString MainWindow::vertex2String(Vertex v)
 {
     return QString("(%1, %2, %3)").arg(v.x()).arg(v.y()).arg(v.z());
+}
+
+QString MainWindow::matrix2String(QMatrix4x4 *m)
+{
+    return QString("(%1, %2, %3, %4)\n(%5, %6, %7, %8)\n(%9, %10, %11, %12)\n(%13, %14, %15, %16)")
+            .arg(m->row(0).w()).arg(m->row(0).x()).arg(m->row(0).y()).arg(m->row(0).z())
+            .arg(m->row(1).w()).arg(m->row(1).x()).arg(m->row(1).y()).arg(m->row(1).z())
+            .arg(m->row(2).w()).arg(m->row(2).x()).arg(m->row(2).y()).arg(m->row(2).z())
+            .arg(m->row(3).w()).arg(m->row(3).x()).arg(m->row(3).y()).arg(m->row(3).z());
 }
 
 void MainWindow::updateLightButtons()
@@ -376,7 +381,7 @@ void MainWindow::addTransformation()
 {
     Transformation *t = new Transformation();
     transformations->append(t);
-    ui->transListWidget->setCurrentItem(new QListWidgetItem("sarasa", ui->transListWidget));
+    ui->transListWidget->setCurrentItem(new QListWidgetItem(matrix2String(t->getMatrix()), ui->transListWidget));
     if (!isAnimated) reRender();
 }
 
@@ -419,7 +424,7 @@ void MainWindow::readTransformationUI()
         m->setRow(2, c);
         m->setRow(3, d);
         t->setTransformCoordinates(ui->transComboBox->currentIndex());
-//        transformations->replace(pos, t);
+        ui->transListWidget->currentItem()->setText(matrix2String(m));
         if (!isAnimated) reRender();
     }
 }

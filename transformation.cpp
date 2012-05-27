@@ -32,6 +32,12 @@ void Transformation::setTransformCoordinates(int transformCoordinates)
     Transformation::transformCoordinates = transformCoordinates;
 }
 
+Transformation &Transformation::operator *=(Transformation &another)
+{
+    (*m) *= *(another.m);
+    return (*this);
+}
+
 void Transformation::transform(QList<Vertex *> &vertexes)
 {
     for (int i = 0; i<vertexes.size(); i++)

@@ -38,6 +38,7 @@ private:
     LightsContext *lightsContext;
     QList<Transformation*> *transformations;
     QString vertex2String(Vertex v);
+    QString matrix2String(QMatrix4x4 *m);
     bool isAnimated;
 
 private slots:

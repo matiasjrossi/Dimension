@@ -671,11 +671,6 @@
          </item>
         </layout>
        </widget>
-       <widget class="QWidget" name="tab_2">
-        <attribute name="title">
-         <string>Viewport Information</string>
-        </attribute>
-       </widget>
       </widget>
      </item>
     </layout>
@@ -717,6 +712,43 @@
   </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
+ <tabstops>
+  <tabstop>tabWidget</tabstop>
+  <tabstop>objectAmbientButton</tabstop>
+  <tabstop>objectDiffuseButton</tabstop>
+  <tabstop>objectSpecularButton</tabstop>
+  <tabstop>objectShininessSpinbox</tabstop>
+  <tabstop>lightsAmbientButton</tabstop>
+  <tabstop>lightsListWidget</tabstop>
+  <tabstop>lightsDeleteButton</tabstop>
+  <tabstop>lightsAddButton</tabstop>
+  <tabstop>lightsXSpinbox</tabstop>
+  <tabstop>lightsYSpinbox</tabstop>
+  <tabstop>lightsZSpinbox</tabstop>
+  <tabstop>lightsRotateWithCameraCheckbox</tabstop>
+  <tabstop>lightsDiffuseButton</tabstop>
+  <tabstop>lightsSpecularButton</tabstop>
+  <tabstop>transListWidget</tabstop>
+  <tabstop>transDeleteButton</tabstop>
+  <tabstop>transAddButton</tabstop>
+  <tabstop>transA1</tabstop>
+  <tabstop>transA2</tabstop>
+  <tabstop>transA3</tabstop>
+  <tabstop>transA4</tabstop>
+  <tabstop>transB1</tabstop>
+  <tabstop>transB2</tabstop>
+  <tabstop>transB3</tabstop>
+  <tabstop>transB4</tabstop>
+  <tabstop>transC1</tabstop>
+  <tabstop>transC2</tabstop>
+  <tabstop>transC3</tabstop>
+  <tabstop>transC4</tabstop>
+  <tabstop>transD1</tabstop>
+  <tabstop>transD2</tabstop>
+  <tabstop>transD3</tabstop>
+  <tabstop>transD4</tabstop>
+  <tabstop>transComboBox</tabstop>
+ </tabstops>
  <resources>
   <include location="icons.qrc"/>
  </resources>

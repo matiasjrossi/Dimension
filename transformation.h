@@ -17,6 +17,7 @@ public:
     void setTransformCoordinates(int transformCoordinates);
     void transform(Vertex *vertex);
     void transform(QList<Vertex *> &vertexes);
+    Transformation &operator*=(Transformation &another);
 private:
     QMatrix4x4 *m;
     int transformCoordinates;

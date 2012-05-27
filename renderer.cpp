@@ -36,15 +36,16 @@ QImage *Renderer::render(ObjectModel *model, QSize size, Material *objectMateria
 {
     ObjectModel *modelAux = new ObjectModel(model);
     LightsContext *lightsAux = new LightsContext(lightsContext);
+    Transformation toApply;
     // Object transformations
     for (int i=0; i<transformations->size(); i++) {
         Transformation *t = transformations->at(i);
         if (t->getTransformCoordinates() == Transformation::TRANSFORM_OBJECT)
-            t->transform(modelAux->getVertexes());
+            toApply *= *t;
     }
     // Camera transformations
     Transformation rot = buildRotation();
-    rot.transform(modelAux->getVertexes());
+    toApply *= rot;
     for (unsigned i=0; i<lightsAux->getLightsCount(); i++) {
         Light *l = lightsAux->getLightPtrAt(i);
         if (l->isRotateWithCamera())
@@ -53,8 +54,9 @@ QImage *Renderer::render(ObjectModel *model, QSize size, Material *objectMateria
     for (int i=0; i<transformations->size(); i++) {
         Transformation *t = transformations->at(i);
         if (t->getTransformCoordinates() == Transformation::TRANSFORM_CAMERA)
-            t->transform(modelAux->getVertexes());
+            toApply *= *t;
     }
+    toApply.transform(modelAux->getVertexes());
     sortTrianglesZ(modelAux->getTriangles());
     QImage* result = paint(modelAux->getTriangles(), size, objectMaterial, lightsAux);
     delete modelAux;
