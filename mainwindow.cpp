@@ -473,7 +473,9 @@ void MainWindow::updateTransformationUI()
         ui->transD2->setValue(d.x());
         ui->transD3->setValue(d.y());
         ui->transD4->setValue(d.z());
+        ui->transComboBox->blockSignals(true);
         ui->transComboBox->setCurrentIndex(t->getTransformCoordinates());
+        ui->transComboBox->blockSignals(false);
     }
     bool valid = (pos != -1);
     ui->transA1->setEnabled(valid);
