@@ -46,5 +46,5 @@ void Transformation::transform(QList<Vertex *> &vertexes)
 
 void Transformation::transform(Vertex *vertex)
 {
-    vertex->setQVector(m->map(vertex->toQVector()));
+    vertex->setQVector((*m)*(vertex->toQVector()));
 }

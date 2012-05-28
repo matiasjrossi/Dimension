@@ -25,7 +25,7 @@ public:
     void setY(double y){ _y=y; };
     void setZ(double z){ _z=z; };
 
-    QVector4D toQVector(){ return QVector4D(_x,_y,_z,0); };
+    QVector4D toQVector(){ return QVector4D(_x,_y,_z, 1); };
     void setQVector(QVector4D v){ _x=v.x(); _y=v.y(); _z=v.z(); };
 
     Vertex operator+(Vertex o){return Vertex(_x+o._x,_y+o._y,_z+o._z);};
