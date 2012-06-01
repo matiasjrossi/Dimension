@@ -15,13 +15,18 @@ protected:
     void paintEvent(QPaintEvent *);
     void resizeEvent(QResizeEvent *);
     void mousePressEvent(QMouseEvent *);
+    void mouseReleaseEvent(QMouseEvent *);
     void mouseMoveEvent(QMouseEvent *);
+    void wheelEvent(QWheelEvent *);
 private:
     QImage *image;
     QPoint lastMousePos;
+    bool shiftMode;
 signals:
     void resized();
     void mouseDrag(double,double);
+    void mouseWheel(int);
+    void objectShift(double, double);
 };
 
 #endif // VIEWPORT_H

@@ -11,6 +11,8 @@
 #include "phongmodel.h"
 #include "light.h"
 
+#define SHIFT_MOD 2.0
+
 // z value average
 double avZ(Triangle* t)
 {
@@ -23,12 +25,15 @@ bool zLess(Triangle* a, Triangle* b)
 }
 
 Renderer::Renderer() :
-        rotX(0),
-        rotY(0),
-        rotZ(0),
-        wireframeVisibility(false),
-        backgroundColor(QColor(0, 25, 40)),
-        wireframeColor(QColor(255, 255, 0))
+    rotX(0),
+    rotY(0),
+    rotZ(0),
+    _zoom(0),
+    shiftX(0.0),
+    shiftY(0.0),
+    wireframeVisibility(false),
+    backgroundColor(QColor(0, 25, 40)),
+    wireframeColor(QColor(255, 255, 0))
 {
 }
 
@@ -44,7 +49,7 @@ QImage *Renderer::render(ObjectModel *model, QSize size, Material *objectMateria
             toApply *= *t;
     }
     // Camera transformations
-    Transformation rot = buildRotation();
+    Transformation rot = buildViewportTransformation();
     toApply *= rot;
     for (unsigned i=0; i<lightsAux->getLightsCount(); i++) {
         Light *l = lightsAux->getLightPtrAt(i);
@@ -72,17 +77,17 @@ double modulus(double a, double b)
 
 void Renderer::rotateX(double r)
 {
-    rotX += r;
+    setRotationX(rotX + 2*PI*r);
 }
 
 void Renderer::rotateY(double r)
 {
-    rotY += r;
+    setRotationY(rotY + 2*PI*r);
 }
 
 void Renderer::rotateZ(double r)
 {
-    rotZ += r;
+    setRotationY(rotY + 2*PI*r);
 }
 
 void Renderer::setRotationX(double r)
@@ -105,8 +110,21 @@ void Renderer::sortTrianglesZ(QList<Triangle*> &triangles)
     qSort(triangles.begin(), triangles.end(), zLess);
 }
 
-Transformation Renderer::buildRotation()
+Transformation Renderer::buildViewportTransformation()
 {
+    // Scale object based on _zoom
+    double zoomScale = 1.0;
+    if (_zoom < 0)
+        zoomScale += _zoom / 10.0;
+    else
+        zoomScale += _zoom;
+
+    QMatrix4x4 scale(zoomScale, 0, 0, 0,
+                     0, zoomScale, 0, 0,
+                     0, 0, zoomScale, 0,
+                     0, 0, 0, zoomScale);
+
+    // Rotate the object from its center
     QMatrix4x4 xRM(1, 0, 0, 0,
                    0, cos(rotX), -sin(rotX), 0,
                    0, sin(rotX), cos(rotX), 0,
@@ -120,7 +138,13 @@ Transformation Renderer::buildRotation()
                    0, 0, 1, 0,
                    0, 0, 0, 1);
 
-    return Transformation(new QMatrix4x4(xRM * yRM * zRM));
+    // Shift the object +(shiftX, shiftY, 0)
+    QMatrix4x4 shift(1, 0, 0,    shiftX,
+                     0, 1, 0, -1*shiftY,
+                     0, 0, 1, 0,
+                     0, 0, 0, 1);
+
+    return Transformation(new QMatrix4x4(scale * shift * xRM * yRM * zRM));
 }
 
 QImage *Renderer::paint(QList<Triangle*> &triangles, QSize size, Material *objectMaterial, LightsContext *lightsContext)
@@ -199,4 +223,39 @@ QColor Renderer::getBackgroundColor()
 QColor Renderer::getWireframeColor()
 {
     return wireframeColor;
+}
+
+void Renderer::setZoom(int zoom)
+{
+    if (zoom > 9)
+        zoom = 9;
+    else if (zoom < -9)
+        zoom = -9;
+
+    Renderer::_zoom = zoom;
+}
+
+void Renderer::zoom(int delta)
+{
+    setZoom(_zoom + delta);
+}
+
+void Renderer::setShiftX(double s)
+{
+    if (s > SHIFT_MOD) s = SHIFT_MOD;
+    else if (s < -SHIFT_MOD) s = -SHIFT_MOD;
+    shiftX = s;
+}
+
+void Renderer::setShiftY(double s)
+{
+    if (s > SHIFT_MOD) s = SHIFT_MOD;
+    else if (s < -SHIFT_MOD) s = -SHIFT_MOD;
+    shiftY = s;
+}
+
+void Renderer::shift(double x, double y)
+{
+    setShiftX(shiftX + x * SHIFT_MOD);
+    setShiftY(shiftY + y * SHIFT_MOD);
 }

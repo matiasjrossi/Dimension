@@ -25,6 +25,11 @@ public:
     void setRotationY(double);
     void setRotationZ(double);
     void changeRotation(double, double);
+    void setZoom(int);
+    void zoom(int);
+    void setShiftX(double);
+    void setShiftY(double);
+    void shift(double,double);
     void setWireframeVisibility(bool);
     void setBackgroundColor(QColor);
     void setWireframeColor(QColor);
@@ -32,9 +37,11 @@ public:
     QColor getWireframeColor();
 protected:
     void sortTrianglesZ(QList<Triangle*> &triangles);
-    Transformation buildRotation();
+    Transformation buildViewportTransformation();
     QImage *paint(QList<Triangle*> &triangles, QSize size, Material *objectMaterial, LightsContext *lightsContext);
     double rotX, rotY, rotZ;
+    int _zoom;
+    double shiftX, shiftY;
     bool wireframeVisibility;
     QColor backgroundColor, wireframeColor;
 };

@@ -65,6 +65,8 @@ private slots:
     void deleteSelectedTransformation();
     void updateTransformationUI();
     void readTransformationUI();
+    void zoom(int);
+    void shift(double, double);
 };
 
 #endif // MAINWINDOW_H

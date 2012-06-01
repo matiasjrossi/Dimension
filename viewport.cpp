@@ -4,8 +4,9 @@
 #include <QMouseEvent>
 
 Viewport::Viewport(QWidget *parent) :
-        QWidget(parent),
-        image(NULL)
+    QWidget(parent),
+    image(NULL),
+    shiftMode(false)
 {
     setMouseTracking(true);
     setCursor(Qt::OpenHandCursor);
@@ -35,15 +36,39 @@ void Viewport::resizeEvent(QResizeEvent *)
 
 void Viewport::mousePressEvent(QMouseEvent *e)
 {
+    if (e->type() == QMouseEvent::MouseButtonDblClick && e->button() == Qt::LeftButton) {
+        shiftMode = true;
+        setCursor(Qt::SizeAllCursor);
+    } else if (e->type() == QMouseEvent::MouseButtonPress && e->button() == Qt::LeftButton) {
+        shiftMode = false;
+        setCursor(Qt::ClosedHandCursor);
+    }
     lastMousePos = e->pos();
+
+}
+
+void Viewport::mouseReleaseEvent(QMouseEvent *e)
+{
+    if (!shiftMode)
+        if (e->button() == Qt::LeftButton)
+            setCursor(Qt::OpenHandCursor);
 }
 
 void Viewport::mouseMoveEvent(QMouseEvent *e)
 {
-    if(e->buttons() & Qt::LeftButton)
-    {
-        QPoint deltas = lastMousePos-e->pos();
-        emit mouseDrag(static_cast<double>(deltas.x())/width(), static_cast<double>(-1*deltas.y())/height());
-        lastMousePos = e->pos();
+    QPoint deltas = e->pos()-lastMousePos;
+    if (shiftMode) {
+        emit objectShift(static_cast<double>(deltas.x())/width(), static_cast<double>(deltas.y())/height());
+    } else {
+        if(e->buttons() & Qt::LeftButton)
+        {
+            emit mouseDrag(static_cast<double>(deltas.x())/width(), static_cast<double>(deltas.y())/height());
+        }
     }
+    lastMousePos = e->pos();
+}
+
+void Viewport::wheelEvent(QWheelEvent *e)
+{
+    emit mouseWheel(e->delta()/120);
 }

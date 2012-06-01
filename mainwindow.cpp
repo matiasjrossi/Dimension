@@ -47,6 +47,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // Mouse events for the viewport
     connect(vp, SIGNAL(mouseDrag(double,double)), this, SLOT(rotate(double,double)));
+    connect(vp, SIGNAL(mouseWheel(int)), this, SLOT(zoom(int)));
+    connect(vp, SIGNAL(objectShift(double,double)), this, SLOT(shift(double, double)));
 
     // Background button setup
     background->setText("Background");
@@ -171,7 +173,7 @@ void MainWindow::on_actionAnimation_toggled(bool s)
 void MainWindow::on_actionToggle_wireframe_toggled(bool s)
 {
     renderer->setWireframeVisibility(s);
-    reRender();
+    if (!isAnimated) reRender();
 }
 
 void MainWindow::reRender()
@@ -183,12 +185,25 @@ void MainWindow::reRender()
 void MainWindow::rotate(double x, double y)
 {
     renderer->changeRotation(x, y);
-    reRender();
+    if (!isAnimated) reRender();
+}
+
+void MainWindow::zoom(int z)
+{
+    renderer->zoom(z);
+    if (!isAnimated) reRender();
+}
+
+void MainWindow::shift(double x, double y)
+{
+    renderer->shift(x, y);
+    if (!isAnimated) reRender();
 }
 
 void MainWindow::autoRotate()
 {
-    rotate(PI/(FPS*2), PI/(FPS*20));
+    rotate(1.0/(FPS*4), 1.0/(FPS*40));
+    reRender();
 }
 
 void MainWindow::addLight()
@@ -402,22 +417,22 @@ void MainWindow::readTransformationUI()
         QVector4D b;
         QVector4D c;
         QVector4D d;
-        a.setW(ui->transA1->value());
-        a.setX(ui->transA2->value());
-        a.setY(ui->transA3->value());
-        a.setZ(ui->transA4->value());
-        b.setW(ui->transB1->value());
-        b.setX(ui->transB2->value());
-        b.setY(ui->transB3->value());
-        b.setZ(ui->transB4->value());
-        c.setW(ui->transC1->value());
-        c.setX(ui->transC2->value());
-        c.setY(ui->transC3->value());
-        c.setZ(ui->transC4->value());
-        d.setW(ui->transD1->value());
-        d.setX(ui->transD2->value());
-        d.setY(ui->transD3->value());
-        d.setZ(ui->transD4->value());
+        a.setX(ui->transA1->value());
+        a.setY(ui->transA2->value());
+        a.setZ(ui->transA3->value());
+        a.setW(ui->transA4->value());
+        b.setX(ui->transB1->value());
+        b.setY(ui->transB2->value());
+        b.setZ(ui->transB3->value());
+        b.setW(ui->transB4->value());
+        c.setX(ui->transC1->value());
+        c.setY(ui->transC2->value());
+        c.setZ(ui->transC3->value());
+        c.setW(ui->transC4->value());
+        d.setX(ui->transD1->value());
+        d.setY(ui->transD2->value());
+        d.setZ(ui->transD3->value());
+        d.setW(ui->transD4->value());
         QMatrix4x4 *m = t->getMatrix();
         m->setRow(0, a);
         m->setRow(1, b);
@@ -457,22 +472,22 @@ void MainWindow::updateTransformationUI()
         QVector4D b = m->row(1);
         QVector4D c = m->row(2);
         QVector4D d = m->row(3);
-        ui->transA1->setValue(a.w());
-        ui->transA2->setValue(a.x());
-        ui->transA3->setValue(a.y());
-        ui->transA4->setValue(a.z());
-        ui->transB1->setValue(b.w());
-        ui->transB2->setValue(b.x());
-        ui->transB3->setValue(b.y());
-        ui->transB4->setValue(b.z());
-        ui->transC1->setValue(c.w());
-        ui->transC2->setValue(c.x());
-        ui->transC3->setValue(c.y());
-        ui->transC4->setValue(c.z());
-        ui->transD1->setValue(d.w());
-        ui->transD2->setValue(d.x());
-        ui->transD3->setValue(d.y());
-        ui->transD4->setValue(d.z());
+        ui->transA1->setValue(a.x());
+        ui->transA2->setValue(a.y());
+        ui->transA3->setValue(a.z());
+        ui->transA4->setValue(a.w());
+        ui->transB1->setValue(b.x());
+        ui->transB2->setValue(b.y());
+        ui->transB3->setValue(b.z());
+        ui->transB4->setValue(b.w());
+        ui->transC1->setValue(c.x());
+        ui->transC2->setValue(c.y());
+        ui->transC3->setValue(c.z());
+        ui->transC4->setValue(c.w());
+        ui->transD1->setValue(d.x());
+        ui->transD2->setValue(d.y());
+        ui->transD3->setValue(d.z());
+        ui->transD4->setValue(d.w());
         ui->transComboBox->blockSignals(true);
         ui->transComboBox->setCurrentIndex(t->getTransformCoordinates());
         ui->transComboBox->blockSignals(false);
