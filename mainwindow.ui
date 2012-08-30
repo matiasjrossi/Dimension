@@ -22,7 +22,7 @@
    <property name="minimumSize">
     <size>
      <width>300</width>
-     <height>477</height>
+     <height>490</height>
     </size>
    </property>
    <property name="maximumSize">
@@ -48,7 +48,7 @@
         <enum>QTabWidget::East</enum>
        </property>
        <property name="currentIndex">
-        <number>0</number>
+        <number>2</number>
        </property>
        <widget class="QWidget" name="objectTab">
         <attribute name="title">
@@ -368,11 +368,11 @@
         <attribute name="title">
          <string>Transformations</string>
         </attribute>
-        <layout class="QVBoxLayout" name="verticalLayout_5">
-         <item>
+        <layout class="QGridLayout" name="gridLayout_9">
+         <item row="0" column="0">
           <widget class="QListWidget" name="transListWidget"/>
          </item>
-         <item>
+         <item row="1" column="0">
           <layout class="QHBoxLayout" name="horizontalLayout_2">
            <item>
             <widget class="QPushButton" name="transDeleteButton">
@@ -390,12 +390,52 @@
            </item>
           </layout>
          </item>
-         <item>
-          <widget class="QGroupBox" name="groupBox_7">
+         <item row="2" column="0">
+          <widget class="QComboBox" name="transTypeComboBox">
+           <item>
+            <property name="text">
+             <string>Linear Transformation</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Twisting</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Tappering</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Bending</string>
+            </property>
+           </item>
+          </widget>
+         </item>
+         <item row="3" column="0">
+          <widget class="QGroupBox" name="linearProperties">
            <property name="title">
             <string>Matrix</string>
            </property>
            <layout class="QGridLayout" name="gridLayout_2">
+            <item row="1" column="3">
+             <widget class="QDoubleSpinBox" name="transB4">
+              <property name="frame">
+               <bool>false</bool>
+              </property>
+              <property name="buttonSymbols">
+               <enum>QAbstractSpinBox::NoButtons</enum>
+              </property>
+              <property name="minimum">
+               <double>-99.989999999999995</double>
+              </property>
+              <property name="singleStep">
+               <double>0.100000000000000</double>
+              </property>
+             </widget>
+            </item>
             <item row="2" column="1">
              <widget class="QDoubleSpinBox" name="transC2">
               <property name="frame">
@@ -414,22 +454,6 @@
             </item>
             <item row="1" column="0">
              <widget class="QDoubleSpinBox" name="transB1">
-              <property name="frame">
-               <bool>false</bool>
-              </property>
-              <property name="buttonSymbols">
-               <enum>QAbstractSpinBox::NoButtons</enum>
-              </property>
-              <property name="minimum">
-               <double>-99.989999999999995</double>
-              </property>
-              <property name="singleStep">
-               <double>0.100000000000000</double>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="3">
-             <widget class="QDoubleSpinBox" name="transB4">
               <property name="frame">
                <bool>false</bool>
               </property>
@@ -652,21 +676,82 @@
               </property>
              </widget>
             </item>
-            <item row="4" column="0" colspan="4">
-             <widget class="QComboBox" name="transComboBox">
-              <item>
-               <property name="text">
-                <string>Transform object</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>Transform camera</string>
-               </property>
-              </item>
+           </layout>
+          </widget>
+         </item>
+         <item row="4" column="0">
+          <widget class="QWidget" name="twistingProperties" native="true">
+           <property name="enabled">
+            <bool>true</bool>
+           </property>
+           <layout class="QGridLayout" name="gridLayout_6">
+            <item row="0" column="0">
+             <widget class="QLabel" name="label_6">
+              <property name="text">
+               <string>Spins</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <widget class="QDoubleSpinBox" name="twistingSpinsSpinBox">
+              <property name="minimum">
+               <double>-2.000000000000000</double>
+              </property>
+              <property name="maximum">
+               <double>2.000000000000000</double>
+              </property>
+              <property name="singleStep">
+               <double>0.050000000000000</double>
+              </property>
+              <property name="value">
+               <double>0.100000000000000</double>
+              </property>
              </widget>
             </item>
            </layout>
+          </widget>
+         </item>
+         <item row="5" column="0">
+          <widget class="QWidget" name="bendingProperties" native="true">
+           <layout class="QGridLayout" name="gridLayout_5">
+            <item row="0" column="0">
+             <widget class="QLabel" name="label_5">
+              <property name="text">
+               <string>Radius</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <widget class="QDoubleSpinBox" name="bendingRadiusSpinBox">
+              <property name="minimum">
+               <double>0.100000000000000</double>
+              </property>
+              <property name="maximum">
+               <double>10.000000000000000</double>
+              </property>
+              <property name="singleStep">
+               <double>0.050000000000000</double>
+              </property>
+              <property name="value">
+               <double>0.250000000000000</double>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item row="6" column="0">
+          <widget class="QComboBox" name="transCoordinatesComboBox">
+           <item>
+            <property name="text">
+             <string>Transform object</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Transform camera</string>
+            </property>
+           </item>
           </widget>
          </item>
         </layout>
@@ -747,7 +832,6 @@
   <tabstop>transD2</tabstop>
   <tabstop>transD3</tabstop>
   <tabstop>transD4</tabstop>
-  <tabstop>transComboBox</tabstop>
  </tabstops>
  <resources>
   <include location="icons.qrc"/>

@@ -41,16 +41,16 @@ QImage *Renderer::render(ObjectModel *model, QSize size, Material *objectMateria
 {
     ObjectModel *modelAux = new ObjectModel(model);
     LightsContext *lightsAux = new LightsContext(lightsContext);
-    Transformation toApply;
+//    Transformation toApply;
     // Object transformations
     for (int i=0; i<transformations->size(); i++) {
         Transformation *t = transformations->at(i);
         if (t->getTransformCoordinates() == Transformation::TRANSFORM_OBJECT)
-            toApply *= *t;
+            t->transform(modelAux->getVertexes());
     }
     // Camera transformations
     Transformation rot = buildViewportTransformation();
-    toApply *= rot;
+    rot.transform(modelAux->getVertexes());
     for (unsigned i=0; i<lightsAux->getLightsCount(); i++) {
         Light *l = lightsAux->getLightPtrAt(i);
         if (l->isRotateWithCamera())
@@ -59,9 +59,8 @@ QImage *Renderer::render(ObjectModel *model, QSize size, Material *objectMateria
     for (int i=0; i<transformations->size(); i++) {
         Transformation *t = transformations->at(i);
         if (t->getTransformCoordinates() == Transformation::TRANSFORM_CAMERA)
-            toApply *= *t;
+            t->transform(modelAux->getVertexes());
     }
-    toApply.transform(modelAux->getVertexes());
     sortTrianglesZ(modelAux->getTriangles());
     QImage* result = paint(modelAux->getTriangles(), size, objectMaterial, lightsAux);
     delete modelAux;
@@ -144,7 +143,9 @@ Transformation Renderer::buildViewportTransformation()
                      0, 0, 1, 0,
                      0, 0, 0, 1);
 
-    return Transformation(new QMatrix4x4(scale * shift * xRM * yRM * zRM));
+    Transformation t(Transformation::TRANSFORMATION_LINEAR);
+    t.setMatrix(new QMatrix4x4(scale * shift * xRM * yRM * zRM));
+    return t;
 }
 
 QImage *Renderer::paint(QList<Triangle*> &triangles, QSize size, Material *objectMaterial, LightsContext *lightsContext)
