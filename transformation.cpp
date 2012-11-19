@@ -109,12 +109,6 @@ void Transformation::transform(QList<Vertex *> &vertexes)
         transform(vertexes.at(i));
 }
 
-//Transformation &Transformation::operator *=(Transformation &another)
-//{
-//    (*matrix) *= *(another.matrix);
-//    return (*this);
-//}
-
 QString Transformation::toString()
 {
     switch(transformationType) {

@@ -24,7 +24,6 @@ public:
 
     void transform(Vertex *vertex);
     void transform(QList<Vertex *> &vertexes);
-//    Transformation &operator*=(Transformation &another);
     QString toString();
 
     // Linear
