@@ -1,4 +1,5 @@
 #include "transformation.h"
+#include <limits>
 
 #define PI 3.14159265359
 
@@ -80,8 +81,12 @@ void Transformation::transform(Vertex *vertex)
             }
             break;
         case TRANSFORMATION_BENDING: {
-                double a = (radius - radius * cos(vertex->z()/radius)/vertex->z());
-                double b = (radius * sin(vertex->z()/radius)/vertex->z());
+                // Avoid division by zero
+                double safe_z = vertex->z();
+                if (safe_z == 0.0)
+                    safe_z = std::numeric_limits<double>::min();
+                double a = radius - radius * cos(vertex->z()/radius)/safe_z;
+                double b = radius * sin(vertex->z()/radius)/safe_z;
                 QMatrix4x4 m(1, 0, a, 0,
                              0, 1, 0, 0,
                              0, 0, b, 0,
