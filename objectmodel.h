@@ -59,20 +59,13 @@ public:
         _a = a;
         _b = b;
         _c = c;
-        _normal = NULL;
     };
-    ~Triangle(){
-        if  (_normal != NULL)
-            delete _normal;
-    }
 
     Vertex *a() { return _a; };
     Vertex *b() { return _b; };
     Vertex *c() { return _c; };
     Vertex normal() {
-        if (_normal == NULL)
-            _normal = new Vertex(Vertex::crossProduct(*_a, *_b, *_c).getNormalized());
-        return *_normal;
+        return Vertex(Vertex::crossProduct(*_a, *_b, *_c).getNormalized());
     };
 
     Vertex orthoCenter() {
@@ -80,7 +73,7 @@ public:
     }
 
 private:
-    Vertex *_a, *_b, *_c, *_normal;
+    Vertex *_a, *_b, *_c;
 };
 
 class ObjectModel
