@@ -41,7 +41,6 @@ QImage *Renderer::render(ObjectModel *model, QSize size, Material *objectMateria
 {
     ObjectModel *modelAux = new ObjectModel(model);
     LightsContext *lightsAux = new LightsContext(lightsContext);
-//    Transformation toApply;
     // Object transformations
     for (int i=0; i<transformations->size(); i++) {
         Transformation *t = transformations->at(i);
